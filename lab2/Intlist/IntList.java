@@ -74,6 +74,17 @@ public class IntList {
 
     /** DO NOT MODIFY ANYTHING ABOVE THIS LINE! */
 
+    public void addLast(int x) {
+        if (rest == null) {
+            rest = new IntList(x, null);
+            return;
+        }
+        rest.addLast(x);
+    }
+
+    public IntList getLast(){
+        return null;
+    }
 
     /**
      * Returns a list consisting of the elements of A followed by the
@@ -81,8 +92,16 @@ public class IntList {
      */
 
     public static IntList dcatenate(IntList A, IntList B) {
-        //TODO:  fill in method
-        return null;
+        if (A == null) {
+            A = B;
+            return A;
+        }
+        if (A.rest == null) {
+            A.rest = B;
+            return A;
+        }
+        dcatenate(A.rest, B);
+        return A;
     }
 
     /**
@@ -90,8 +109,14 @@ public class IntList {
      * * elements of B.  May NOT modify items of A.  Use 'new'.
      */
     public static IntList catenate(IntList A, IntList B) {
-        //TODO:  fill in method
-        return null;
+        IntList returnList = new IntList(A.first, null);
+        for (IntList M = A.rest; M != null; M = M.rest) {
+            returnList.addLast(M.first);
+        }
+        for (IntList M = B; M != null; M = M.rest) {
+            returnList.addLast(M.first);
+        }
+        return returnList;
     }
 
 
