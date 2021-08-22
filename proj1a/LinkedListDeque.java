@@ -8,17 +8,38 @@ public class LinkedListDeque<Stuff> {
             item = i;
             next = n;
         }
+        public StuffNode (Stuff i) {
+            prev = null;
+            item = i;
+            next = null;
+        }
     }
 
-    private StuffNode item;
     private int sizeConstant;
     public StuffNode sentinel;
 
+    public LinkedListDeque() {
+        sentinel = new StuffNode(null);
+        sentinel.prev = sentinel;
+        sentinel.next = sentinel;
+        sizeConstant = 0;
+    }
+
+    public LinkedListDeque(LinkedListDeque other) {
+        sentinel = new StuffNode(null);
+        sentinel.prev = sentinel;
+        sentinel.next = sentinel;
+        sizeConstant = 0;
+
+        for (int i = 0; i < other.size(); i += 1) {
+            addLast((Stuff) other.get(i));
+        }
+    }
+
     public LinkedListDeque(Stuff x){
-        sentinel = new StuffNode(null, x, null);
-        item = new StuffNode(sentinel, x, null);
-        sentinel.prev = item;
-        sentinel.next = item;
+        sentinel = new StuffNode(x);
+        StuffNode newNode = new StuffNode(x);
+        insertNodeAs(sentinel, newNode, sentinel);
         sizeConstant = 1;
     }
 
@@ -27,48 +48,27 @@ public class LinkedListDeque<Stuff> {
         b.prev = a;
     }
 
-    private void disConnectNodes(StuffNode a, StuffNode b) {
-        a.next = null;
-        b.prev = null;
+    public void insertNodeAs(StuffNode a, StuffNode b, StuffNode c) {
+        connectNodes(a, b);
+        connectNodes(b, c);
     }
-
-    public LinkedListDeque() {
-        item = null;
-        sentinel = null;
-        sizeConstant = 0;
-    }
-
 
     public void addFirst(Stuff f) {
         sizeConstant += 1;
-        if (sentinel == null) {
-            StuffNode newNode = new StuffNode(null, f, null);
-            sentinel = new StuffNode(newNode, f, newNode);
-            return;
-        }
         StuffNode newNode = new StuffNode(null, f, null);
-        StuffNode secondNode = sentinel.next;
-        disConnectNodes(sentinel, secondNode);
-        connectNodes(sentinel, newNode);
-        connectNodes(newNode, secondNode);
+        insertNodeAs(sentinel, newNode, sentinel.next);
     }
 
 
     public void addLast(Stuff item){
         sizeConstant += 1;
         StuffNode newNode = new StuffNode(null, item, null);
-        if (sentinel == null) {
-            sentinel = new StuffNode(newNode, item, newNode);
-            return;
-        }
         StuffNode lastNode = sentinel.prev;
-        connectNodes(lastNode, newNode);
-        newNode.next = sentinel;
-        sentinel.prev = newNode;
+        insertNodeAs(lastNode, newNode, sentinel);
     }
 
     public boolean isEmpty() {
-        return sizeConstant == 0;
+        return size() == 0;
     }
 
     public int size() {
@@ -86,16 +86,21 @@ public class LinkedListDeque<Stuff> {
 
     public Stuff removeFirst(){
         StuffNode first = sentinel.next;
-        sentinel.next = first.next;
+        Stuff returnItem = first.item;
+        StuffNode second = first.next;
+        connectNodes(sentinel, second);
         sizeConstant -= 1;
-        return first.item;
+        first = null;
+        return returnItem;
     }
 
     public Stuff removeLast() {
         StuffNode last = sentinel.prev;
-        sentinel.prev = last.prev;
+        Stuff returnItem = last.item;
+        connectNodes(last.prev, sentinel);
         sizeConstant -= 1;
-        return last.item;
+        last = null;
+        return returnItem;
     }
 
     public Stuff get(int index){
@@ -108,5 +113,16 @@ public class LinkedListDeque<Stuff> {
             index -= 1;
         }
         return p.item;
+    }
+
+    public Stuff getRecursiveHelper(int index, StuffNode n){
+        if (index == 0) {
+            return n.item;
+        }
+        return getRecursiveHelper(index - 1, n.next);
+    }
+
+    public Stuff getRecursive(int index){
+        return getRecursiveHelper(index, sentinel.next);
     }
 }
