@@ -97,7 +97,7 @@ public class ArrayDequeTest {
     }
 
     @Test
-    public void StartingByLast() {
+    public void startingByLast() {
         ArrayDeque<Integer> a = new ArrayDeque<Integer>();
         a.addLast(1);
         a.addLast(2);

@@ -1,17 +1,17 @@
-public class ArrayDeque<Item> {
-    private Item[] items;
+public class ArrayDeque<T> {
+    private T[] items;
     private int size;
     private int nextFirst;
     private int nextLast;
     private int arraySize;
 
     /** Always returns the current zero index. */
-    public int currentIndexZero;
+    private int currentIndexZero;
 
     /** Creates an empty list. */
     public ArrayDeque() {
         arraySize = 8;
-        items = (Item[]) new Object[arraySize];
+        items = (T[]) new Object[arraySize];
         size = 0;
         nextLast = 0;
         nextFirst = 1;
@@ -20,14 +20,14 @@ public class ArrayDeque<Item> {
 
     public ArrayDeque(ArrayDeque other) {
         arraySize = other.arraySize;
-        items = (Item[]) new Object[arraySize];
+        items = (T[]) new Object[arraySize];
         size = 0;
         nextLast = 0;
         nextFirst = arraySize - 1;
         currentIndexZero = 0;
 
         for (int i = 0; i < other.size(); i += 1) {
-            addLast((Item) other.get(i));
+            addLast((T) other.get(i));
         }
     }
 
@@ -51,7 +51,7 @@ public class ArrayDeque<Item> {
 
     /** Resizes the underlying array to the target capacity. */
     private void resize() {
-        Item[] a = (Item[]) new Object[arraySize];
+        T[] a = (T[]) new Object[arraySize];
         System.arraycopy(items, currentIndexZero, a, 0, size - currentIndexZero);
         System.arraycopy(items, 0, a, size - currentIndexZero, currentIndexZero);
         items = a;
@@ -72,7 +72,7 @@ public class ArrayDeque<Item> {
     }
 
     /** Insert X into the front of the list. */
-    public void addFirst(Item x) {
+    public void addFirst(T x) {
         checkResizing();
         items[nextFirst] = x;
         size += 1;
@@ -82,7 +82,7 @@ public class ArrayDeque<Item> {
 
 
     /** Inserts X into the back of the list. */
-    public void addLast(Item x) {
+    public void addLast(T x) {
         checkResizing();
         items[nextLast] = x;
         size = size + 1;
@@ -90,7 +90,7 @@ public class ArrayDeque<Item> {
     }
 
     /** Returns the item from the back of the list. */
-    public Item getLast() {
+    public T getLast() {
         return items[currentIndexZero + size - 1];
     }
 
@@ -103,7 +103,7 @@ public class ArrayDeque<Item> {
     }
 
     /** Gets the ith item in the list (0 is the front). */
-    public Item get(int i) {
+    public T get(int i) {
         return items[toTrueIndex(i)];
     }
 
@@ -116,7 +116,7 @@ public class ArrayDeque<Item> {
         return size() == 0;
     }
 
-    public void printDeque(){
+    public void printDeque() {
         for (int i = 0; i < size() - 1; i += 1) {
             System.out.print(get(i) + " ");
         }
@@ -125,16 +125,16 @@ public class ArrayDeque<Item> {
 
     /** Deletes item from back of the list and
      * returns deleted item. */
-    public Item removeLast() {
-        Item x = getLast();
+    public T removeLast() {
+        T x = getLast();
         items[currentIndexZero + size - 1] = null;
         nextLast = stepBackwards(nextLast);
         size = size - 1;
         return x;
     }
 
-    public Item removeFirst() {
-        Item x = get(0);
+    public T removeFirst() {
+        T x = get(0);
         items[currentIndexZero] = null;
         nextFirst = stepOnwards(nextFirst);
         size -= 1;
