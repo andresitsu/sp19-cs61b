@@ -16,15 +16,8 @@ public class ArrayDequeTest {
         a.addLast("6");
         a.addLast("7");
         a.addLast("8");
-
-        String expectedOne = "1";
-        String getOne = a.get(1);
-        assertEquals(expectedOne, getOne);
-
-        Boolean expectedEmpty = a.isEmpty();
-        assertEquals(false, expectedEmpty);
-
-        assertEquals(a.size(), 9);
+        a.addLast("9");
+        a.addFirst("0-1");
 
         a.printDeque();
     }
@@ -50,7 +43,6 @@ public class ArrayDequeTest {
         a.removeLast();
         a.removeLast();
         a.addLast("New Last");
-        assertEquals("New Last", a.getLast());
     }
 
     @Test
@@ -78,25 +70,6 @@ public class ArrayDequeTest {
     }
 
     @Test
-    public void testDeepCopy() {
-        ArrayDeque<String> a = new ArrayDeque<String>();
-        a.addFirst("3");
-        a.addLast("4");
-        a.addFirst("2");
-        a.addLast("5");
-        a.addFirst("1");
-        a.addFirst("0");
-        a.addLast("6");
-        a.addLast("7");
-        a.addLast("8");
-
-        ArrayDeque<String> b = new ArrayDeque(a);
-        a.removeLast();
-
-        b.printDeque();
-    }
-
-    @Test
     public void startingByLast() {
         ArrayDeque<Integer> a = new ArrayDeque<Integer>();
         a.addLast(1);
@@ -105,5 +78,37 @@ public class ArrayDequeTest {
 
         int m = a.get(0);
         assertEquals(0, m);
+    }
+
+    @Test
+    public void ensureResizeSafe() {
+        ArrayDeque<Integer> a = new ArrayDeque<>();
+        for (int i = 0; i <= 100; i += 1) {
+            if (i % 2 == 0) {
+                a.addFirst(i);
+            } else {
+                a.addLast(i);
+            }
+        }
+        a.printDeque();
+    }
+
+    @Test
+    public void randomAddandRemove(){
+        ArrayDeque<Integer> a = new ArrayDeque<>();
+        for (int i = 0; i <= 3; i += 1) {
+            a.addFirst(i);
+        }
+        for (int i = 0; i <= 2; i += 1) {
+            a.removeLast();
+        }
+        for (int i = 0; i <= 1; i += 1) {
+            a.removeFirst();
+        }
+        assertEquals(true, a.isEmpty());
+        for (int i = 0; i <= 4; i += 1) {
+            a.addLast(i);
+        }
+        a.printDeque();
     }
 }

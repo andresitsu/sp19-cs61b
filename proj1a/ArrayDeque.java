@@ -1,37 +1,26 @@
 public class ArrayDeque<T> {
     private T[] items;
     private int size;
-    private int nextFirst;
-    private int nextLast;
     private int arraySize;
-
-    /** Always returns the current zero index. */
     private int currentIndexZero;
+
+    private int nextFirst() {
+        return stepBackwards(currentIndexZero);
+    }
+
+    private int nextLast() {
+        return stepOnwards(currentLast());
+    }
 
     /** Creates an empty list. */
     public ArrayDeque() {
         arraySize = 8;
         items = (T[]) new Object[arraySize];
         size = 0;
-        nextLast = 0;
-        nextFirst = 1;
         currentIndexZero = 0;
     }
 
-    public ArrayDeque(ArrayDeque other) {
-        arraySize = other.arraySize;
-        items = (T[]) new Object[arraySize];
-        size = 0;
-        nextLast = 0;
-        nextFirst = arraySize - 1;
-        currentIndexZero = 0;
-
-        for (int i = 0; i < other.size(); i += 1) {
-            addLast((T) other.get(i));
-        }
-    }
-
-    public int stepBackwards(int x) {
+    private int stepBackwards(int x) {
         if (x - 1 >= 0) {
             x -= 1;
         } else {
@@ -40,7 +29,7 @@ public class ArrayDeque<T> {
         return x;
     }
 
-    public int stepOnwards(int x) {
+    private int stepOnwards(int x) {
         if (x + 1 < arraySize) {
             x += 1;
         } else {
@@ -49,22 +38,27 @@ public class ArrayDeque<T> {
         return x;
     }
 
-    /** Resizes the underlying array to the target capacity. */
+    /** Resizes the underlying array. */
     private void resize() {
         T[] a = (T[]) new Object[arraySize];
         System.arraycopy(items, currentIndexZero, a, 0, size - currentIndexZero);
         System.arraycopy(items, 0, a, size - currentIndexZero, currentIndexZero);
         items = a;
-        nextLast = size;
-        nextFirst = arraySize - 1;
         currentIndexZero = 0;
     }
 
-    public double sizeLargingFactor() {
-        return 1.25;
+    private double sizeLargingFactor() {
+        double currentlyUsedSpace = size;
+        double n = 2;
+        double usedRatio = size / (n * size);
+        while (usedRatio < 0.25) {
+            n = n - 0.1;
+            usedRatio = size / (n * size);
+        }
+        return n;
     }
 
-    public void checkResizing() {
+    private void checkResizing() {
         if (size == items.length) {
             arraySize *= sizeLargingFactor();
             resize();
@@ -74,27 +68,40 @@ public class ArrayDeque<T> {
     /** Insert X into the front of the list. */
     public void addFirst(T x) {
         checkResizing();
-        items[nextFirst] = x;
+        if (size() == 0) {
+            items[currentIndexZero] = x;
+        } else {
+            items[nextFirst()] = x;
+            currentIndexZero = stepBackwards(currentIndexZero);
+        }
         size += 1;
-        currentIndexZero = nextFirst;
-        nextFirst = stepBackwards(nextFirst);
     }
-
 
     /** Inserts X into the back of the list. */
     public void addLast(T x) {
         checkResizing();
-        items[nextLast] = x;
-        size = size + 1;
-        nextLast = stepOnwards(nextLast);
+        if (size == 0) {
+            items[currentIndexZero] = x;
+        } else {
+            items[nextLast()] = x;
+        }
+        size += 1;
+    }
+
+    private int currentLast() {
+        if (currentIndexZero + size <= arraySize) {
+            return currentIndexZero + size - 1;
+        } else  {
+            return size - (arraySize - currentIndexZero) - 1;
+        }
     }
 
     /** Returns the item from the back of the list. */
-    public T getLast() {
-        return items[currentIndexZero + size - 1];
+    private T getLast() {
+        return items[currentLast()];
     }
 
-    public int toTrueIndex(int i) {
+    private int toTrueIndex(int i) {
         if (currentIndexZero + i < arraySize) {
             return currentIndexZero + i;
         } else {
@@ -126,19 +133,45 @@ public class ArrayDeque<T> {
     /** Deletes item from back of the list and
      * returns deleted item. */
     public T removeLast() {
+        if (isEmpty()) {
+            return null;
+        }
         T x = getLast();
-        items[currentIndexZero + size - 1] = null;
-        nextLast = stepBackwards(nextLast);
-        size = size - 1;
-        return x;
+        items[currentLast()] = null;
+        if (size == 1) {
+            size = 0;
+            return x;
+        } else {
+            size -= 1;
+            return x;
+        }
     }
 
     public T removeFirst() {
         T x = get(0);
         items[currentIndexZero] = null;
-        nextFirst = stepOnwards(nextFirst);
-        size -= 1;
-        return x;
+        if (isEmpty()){
+            return null;
+        }
+        if (size == 1) {
+            size = 0;
+            return x;
+        } else {
+            size -= 1;
+            return x;
+        }
     }
 
+    //    public ArrayDeque(ArrayDeque other) {
+//        arraySize = other.arraySize;
+//        items = (T[]) new Object[arraySize];
+//        size = 0;
+//        nextLast = 0;
+//        nextFirst = arraySize - 1;
+//        currentIndexZero = 0;
+//
+//        for (int i = 0; i < other.size(); i += 1) {
+//            addLast((T) other.get(i));
+//        }
+//    }
 }

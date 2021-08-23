@@ -1,5 +1,5 @@
 public class LinkedListDeque<T> {
-    public class StuffNode {
+    private class StuffNode {
         private StuffNode prev;
         private T item;
         private StuffNode next;
@@ -25,30 +25,23 @@ public class LinkedListDeque<T> {
         sizeConstant = 0;
     }
 
-    public LinkedListDeque(LinkedListDeque other) {
-        sentinel = new StuffNode(null);
-        sentinel.prev = sentinel;
-        sentinel.next = sentinel;
-        sizeConstant = 0;
-
-        for (int i = 0; i < other.size(); i += 1) {
-            addLast((T) other.get(i));
-        }
-    }
-
-    public LinkedListDeque(T x) {
-        sentinel = new StuffNode(x);
-        StuffNode newNode = new StuffNode(x);
-        insertNodeAs(sentinel, newNode, sentinel);
-        sizeConstant = 1;
-    }
+//    public LinkedListDeque(LinkedListDeque other) {
+//        sentinel = new StuffNode(null);
+//        sentinel.prev = sentinel;
+//        sentinel.next = sentinel;
+//        sizeConstant = 0;
+//
+//        for (int i = 0; i < other.size(); i += 1) {
+//            addLast((T) other.get(i));
+//        }
+//    }
 
     private void connectNodes(StuffNode a, StuffNode b) {
         a.next = b;
         b.prev = a;
     }
 
-    public void insertNodeAs(StuffNode a, StuffNode b, StuffNode c) {
+    private void insertNodeAs(StuffNode a, StuffNode b, StuffNode c) {
         connectNodes(a, b);
         connectNodes(b, c);
     }
@@ -58,7 +51,6 @@ public class LinkedListDeque<T> {
         StuffNode newNode = new StuffNode(null, f, null);
         insertNodeAs(sentinel, newNode, sentinel.next);
     }
-
 
     public void addLast(T item) {
         sizeConstant += 1;
@@ -121,7 +113,7 @@ public class LinkedListDeque<T> {
         return p.item;
     }
 
-    public T getRecursiveHelper(int index, StuffNode n) {
+    private T getRecursiveHelper(int index, StuffNode n) {
         if (index == 0) {
             return n.item;
         }
