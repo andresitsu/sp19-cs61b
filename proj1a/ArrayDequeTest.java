@@ -96,14 +96,14 @@ public class ArrayDequeTest {
     @Test
     public void randomAddandRemove() {
         ArrayDeque<Integer> a = new ArrayDeque<>();
-        for (int i = 0; i <= 50; i += 1) {
+        for (int i = 0; i <= 150; i += 1) {
             a.addFirst(i);
             a.addLast(i + 1);
         }
         int zeropoint = a.get(3);
-        assertEquals(47, zeropoint);
-        assertEquals(102, a.size());
-        for (int i = 0; i <= 50; i += 1) {
+        assertEquals(147, zeropoint);
+        assertEquals(302, a.size());
+        for (int i = 0; i <= 150; i += 1) {
             a.removeLast();
             a.removeFirst();
         }

@@ -159,10 +159,16 @@ public class ArrayDeque<T> {
         double usageRatio = (double) size / (double) arraySize;
         if (usageRatio < 0.26 && arraySize > 32) {
             int oldSize = arraySize;
-            arraySize = (int) Math.round(0.25 * arraySize + 1) ;
+            arraySize = (int) Math.round(0.26 * arraySize + 1);
             T[] a = (T[]) new Object[arraySize];
 
-            System.arraycopy(items, currentIndexZero, a, 0, size);
+            if (currentIndexZero + size < oldSize) {
+                System.arraycopy(items, currentIndexZero, a, 0, size);
+            } else {
+                System.arraycopy(items, currentIndexZero, a, 0, oldSize - currentIndexZero);
+                int residue = size - oldSize + currentIndexZero;
+                System.arraycopy(items, 0, a, oldSize - currentIndexZero, residue);
+            }
             items = a;
             currentIndexZero = 0;
         }
