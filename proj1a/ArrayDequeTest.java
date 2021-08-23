@@ -94,21 +94,42 @@ public class ArrayDequeTest {
     }
 
     @Test
-    public void randomAddandRemove(){
+    public void randomAddandRemove() {
         ArrayDeque<Integer> a = new ArrayDeque<>();
-        for (int i = 0; i <= 3; i += 1) {
+        for (int i = 0; i <= 50; i += 1) {
             a.addFirst(i);
+            a.addLast(i + 1);
         }
-        for (int i = 0; i <= 2; i += 1) {
+        int zeropoint = a.get(3);
+        assertEquals(47, zeropoint);
+        assertEquals(102, a.size());
+        for (int i = 0; i <= 50; i += 1) {
             a.removeLast();
-        }
-        for (int i = 0; i <= 1; i += 1) {
             a.removeFirst();
         }
+
         assertEquals(true, a.isEmpty());
-        for (int i = 0; i <= 4; i += 1) {
+        for (int i = 0; i <= 50; i += 1) {
             a.addLast(i);
+            a.addFirst(i + 1);
         }
-        a.printDeque();
+        for (int i = 0; i <= 50; i += 1) {
+            a.removeFirst();
+        }
+        int m = a.get(0);
+        assertEquals(0, m);
+
+        for (int i = 0; i <= 49; i += 1) {
+            a.removeLast();
+        }
+        int n = a.get(0);
+        assertEquals(0, n);
+
+        a.removeFirst();
+        assertEquals(true, a.isEmpty());
+
+        a.addLast(0);
+        int o = a.size();
+        assertEquals(1, o);
     }
 }

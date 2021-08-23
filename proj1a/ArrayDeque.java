@@ -60,7 +60,7 @@ public class ArrayDeque<T> {
 
     private void checkResizing() {
         if (size == items.length) {
-            arraySize *= sizeLargingFactor();
+            arraySize = (int) Math.round(arraySize * sizeLargingFactor()) + 1;
             resize();
         }
     }
@@ -68,7 +68,7 @@ public class ArrayDeque<T> {
     /** Insert X into the front of the list. */
     public void addFirst(T x) {
         checkResizing();
-        if (size() == 0) {
+        if (size == 0) {
             items[currentIndexZero] = x;
         } else {
             items[nextFirst()] = x;
@@ -120,14 +120,14 @@ public class ArrayDeque<T> {
     }
 
     public boolean isEmpty() {
-        return size() == 0;
+        return size == 0;
     }
 
     public void printDeque() {
-        for (int i = 0; i < size() - 1; i += 1) {
+        for (int i = 0; i < size - 1; i += 1) {
             System.out.print(get(i) + " ");
         }
-        System.out.println(get(size() - 1));
+        System.out.println(get(size - 1));
     }
 
     /** Deletes item from back of the list and
@@ -138,27 +138,33 @@ public class ArrayDeque<T> {
         }
         T x = getLast();
         items[currentLast()] = null;
-        if (size == 1) {
-            size = 0;
-            return x;
-        } else {
-            size -= 1;
-            return x;
-        }
+        size -= 1;
+        shrinking();
+        return x;
     }
 
     public T removeFirst() {
-        T x = get(0);
-        items[currentIndexZero] = null;
-        if (isEmpty()){
+        if (isEmpty()) {
             return null;
         }
-        if (size == 1) {
-            size = 0;
-            return x;
-        } else {
-            size -= 1;
-            return x;
+        T x = get(0);
+        items[currentIndexZero] = null;
+        currentIndexZero = stepOnwards(currentIndexZero);
+        size -= 1;
+        shrinking();
+        return x;
+    }
+
+    private void shrinking() {
+        double usageRatio = (double) size / (double) arraySize;
+        if (usageRatio < 0.26 && arraySize > 32) {
+            int oldSize = arraySize;
+            arraySize = (int) Math.round(0.25 * arraySize + 1) ;
+            T[] a = (T[]) new Object[arraySize];
+
+            System.arraycopy(items, currentIndexZero, a, 0, size);
+            items = a;
+            currentIndexZero = 0;
         }
     }
 
